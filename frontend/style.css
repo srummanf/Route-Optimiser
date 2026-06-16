@@ -1,0 +1,31 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+#map {
+    height: 100vh;
+}
+
+.controls {
+    position: absolute;
+    top: 10px;
+    left: 60px;
+    z-index: 1000;
+
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+button {
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+.stats {
+    margin-top: 10px;
+    font-size: 14px;
+}

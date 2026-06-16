@@ -3,19 +3,23 @@ from ortools.constraint_solver import routing_enums_pb2
 
 
 def solve_route(duration_matrix):
+    """
+    Solve a single-vehicle TSP using OR-Tools.
 
-    node_count = len(duration_matrix)
+    Node 0 = depot/start/end
+    """
+
+    num_locations = len(duration_matrix)
 
     manager = pywrapcp.RoutingIndexManager(
-        node_count,
-        1,
-        0
+        num_locations,
+        1,      # vehicles
+        0       # depot
     )
 
     routing = pywrapcp.RoutingModel(manager)
 
-    def callback(from_index, to_index):
-
+    def time_callback(from_index, to_index):
         from_node = manager.IndexToNode(from_index)
         to_node = manager.IndexToNode(to_index)
 
@@ -23,35 +27,51 @@ def solve_route(duration_matrix):
             duration_matrix[from_node][to_node]
         )
 
-    transit_index = routing.RegisterTransitCallback(
-        callback
+    transit_callback_index = (
+        routing.RegisterTransitCallback(
+            time_callback
+        )
     )
 
     routing.SetArcCostEvaluatorOfAllVehicles(
-        transit_index
+        transit_callback_index
     )
 
     search_parameters = (
         pywrapcp.DefaultRoutingSearchParameters()
     )
 
+    #
+    # Better initial solution
+    #
     search_parameters.first_solution_strategy = (
         routing_enums_pb2.FirstSolutionStrategy
-        .PATH_CHEAPEST_ARC
+        .PARALLEL_CHEAPEST_INSERTION
     )
 
+    #
+    # Strong local optimization
+    #
     search_parameters.local_search_metaheuristic = (
         routing_enums_pb2.LocalSearchMetaheuristic
         .GUIDED_LOCAL_SEARCH
     )
 
-    search_parameters.time_limit.seconds = 5
+    #
+    # Give OR-Tools more time
+    #
+    search_parameters.time_limit.seconds = 30
+
+    #
+    # Continue improving even after first solution
+    #
+    search_parameters.log_search = True
 
     solution = routing.SolveWithParameters(
         search_parameters
     )
 
-    if not solution:
+    if solution is None:
         return None
 
     route = []

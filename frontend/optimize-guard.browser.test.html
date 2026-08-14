@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Optimize Guard Browser Tests</title>
+</head>
+
+<body>
+
+<button id="optimizeBtn">
+    Optimize Route
+</button>
+
+<button id="clearBtn">
+    Clear
+</button>
+
+<div id="stats" class="stats">
+    Add stops on map
+</div>
+
+<div id="map"></div>
+
+<pre id="results"></pre>
+
+<script>
+const testMap = {
+    handlers: {},
+    layers: [],
+    removedLayers: [],
+    fitBoundsCalls: 0,
+    setView() {
+        return this;
+    },
+    on(eventName, handler) {
+        this.handlers[eventName] = handler;
+    },
+    removeLayer(layer) {
+        this.removedLayers.push(layer);
+        this.layers = this.layers.filter(
+            currentLayer => currentLayer !== layer
+        );
+    },
+    fitBounds() {
+        this.fitBoundsCalls += 1;
+    }
+};
+
+window.L = {
+    map() {
+        return testMap;
+    },
+    tileLayer() {
+        return {
+            addTo() {
+                return this;
+            }
+        };
+    },
+    marker(latlng) {
+        return {
+            latlng,
+            tooltip: null,
+            getLatLng() {
+                return this.latlng;
+            },
+            bindTooltip(value) {
+                this.tooltip = value;
+            },
+            addTo(map) {
+                map.layers.push(this);
+                return this;
+            }
+        };
+    },
+    polyline(points) {
+        return {
+            points,
+            addTo(map) {
+                map.layers.push(this);
+                return this;
+            },
+            getBounds() {
+                return this.points;
+            }
+        };
+    }
+};
+</script>
+
+<script src="app.js"></script>
+
+<script>
+(() => {
+const results = document.getElementById("results");
+const optimizeBtn = document.getElementById("optimizeBtn");
+const clearBtn = document.getElementById("clearBtn");
+const stats = document.getElementById("stats");
+const alerts = [];
+
+window.alert = message => {
+    alerts.push(message);
+};
+
+function assert(condition, message) {
+
+    if(!condition) {
+        throw new Error(message);
+    }
+}
+
+function addStop(lat, lng) {
+
+    testMap.handlers.click({
+        latlng: {
+            lat,
+            lng
+        }
+    });
+}
+
+function addTwoStops() {
+
+    addStop(22.57, 88.36);
+    addStop(22.58, 88.37);
+}
+
+function resetApp() {
+
+    clearBtn.click();
+    alerts.length = 0;
+    testMap.fitBoundsCalls = 0;
+}
+
+function deferredResponse() {
+
+    let resolve;
+    let reject;
+
+    const promise = new Promise((promiseResolve, promiseReject) => {
+        resolve = promiseResolve;
+        reject = promiseReject;
+    });
+
+    return {
+        promise,
+        resolve,
+        reject
+    };
+}
+
+function jsonResponse(body) {
+
+    return {
+        json: async () => body
+    };
+}
+
+async function settle() {
+
+    await Promise.resolve();
+    await Promise.resolve();
+}
+
+async function testSuccessfulCompletion() {
+
+    resetApp();
+    addTwoStops();
+
+    let fetchCalls = 0;
+
+    window.fetch = async () => {
+        fetchCalls += 1;
+
+        return jsonResponse({
+            geometry: [
+                [88.36, 22.57],
+                [88.37, 22.58]
+            ],
+            total_distance_m: 2500,
+            total_duration_min: 8.5
+        });
+    };
+
+    optimizeBtn.click();
+    assert(optimizeBtn.disabled, "Optimize is disabled while success request is active");
+    assert(optimizeBtn.textContent.trim() === "Optimizing...", "Optimize shows loading label");
+    assert(stats.textContent.trim() === "Optimizing route...", "Stats show loading state");
+
+    await settle();
+
+    assert(fetchCalls === 1, "Success sends one request");
+    assert(!optimizeBtn.disabled, "Optimize is re-enabled after success");
+    assert(optimizeBtn.textContent.trim() === "Optimize Route", "Optimize label is restored");
+    assert(stats.textContent.includes("Distance:"), "Stats render success details");
+    assert(testMap.fitBoundsCalls === 1, "Route is drawn after success");
+}
+
+async function testFailureRecovery() {
+
+    resetApp();
+    addTwoStops();
+
+    window.fetch = async () => jsonResponse({
+        error: "No solution found"
+    });
+
+    optimizeBtn.click();
+    assert(optimizeBtn.disabled, "Optimize is disabled while failure request is active");
+
+    await settle();
+
+    assert(alerts[0] === "No solution found", "Error response is surfaced");
+    assert(!optimizeBtn.disabled, "Optimize is re-enabled after failure");
+    assert(stats.textContent.trim() === "No solution found", "Stats show the error after failure");
+}
+
+async function testRepeatedClicks() {
+
+    resetApp();
+    addTwoStops();
+
+    const response = deferredResponse();
+    let fetchCalls = 0;
+
+    window.fetch = () => {
+        fetchCalls += 1;
+
+        return response.promise;
+    };
+
+    optimizeBtn.click();
+    optimizeBtn.click();
+
+    assert(fetchCalls === 1, "Repeated Optimize clicks send one request while active");
+
+    response.resolve(jsonResponse({
+        geometry: [
+            [88.36, 22.57],
+            [88.37, 22.58]
+        ],
+        total_distance_m: 3000,
+        total_duration_min: 9
+    }));
+
+    await settle();
+
+    assert(!optimizeBtn.disabled, "Optimize recovers after repeated-click request settles");
+}
+
+async function testClearBeforeResponse() {
+
+    resetApp();
+    addTwoStops();
+
+    const response = deferredResponse();
+
+    window.fetch = () => response.promise;
+
+    optimizeBtn.click();
+    clearBtn.click();
+
+    assert(stats.textContent.trim() === "Add stops on map", "Clear resets stats while request is active");
+    assert(testMap.layers.length === 0, "Clear removes active markers");
+
+    response.resolve(jsonResponse({
+        geometry: [
+            [88.36, 22.57],
+            [88.37, 22.58]
+        ],
+        total_distance_m: 3000,
+        total_duration_min: 9
+    }));
+
+    await settle();
+
+    assert(stats.textContent.trim() === "Add stops on map", "Late response does not replace cleared stats");
+    assert(testMap.layers.length === 0, "Late response does not draw a route after Clear");
+    assert(testMap.fitBoundsCalls === 0, "Late response does not fit route bounds after Clear");
+    assert(!optimizeBtn.disabled, "Optimize recovers after stale response settles");
+}
+
+async function runTests() {
+
+    const tests = [
+        testSuccessfulCompletion,
+        testFailureRecovery,
+        testRepeatedClicks,
+        testClearBeforeResponse
+    ];
+
+    for(const test of tests) {
+        await test();
+        results.textContent += `PASS ${test.name}\n`;
+    }
+
+    results.textContent += "All optimize guard browser tests passed\n";
+}
+
+runTests().catch(error => {
+    results.textContent += `FAIL ${error.message}\n`;
+    throw error;
+});
+})();
+</script>
+
+</body>
+</html>

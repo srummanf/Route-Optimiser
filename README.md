@@ -59,6 +59,7 @@ route-optimizer/
 backend/
 │
 ├── app.py
+├── test_app.py
 ├── solver.py
 ├── osrm_service.py
 ├── requirements.txt
@@ -66,6 +67,7 @@ backend/
 frontend/
 │
 ├── index.html
+├── config.js
 ├── app.js
 ├── style.css
 
@@ -145,6 +147,27 @@ Server runs at:
 http://localhost:8000
 ```
 
+### Configure CORS
+
+The backend reads `CORS_ALLOWED_ORIGINS` as a comma-separated list of complete frontend
+origins. If it is not set, the safe local default is `http://localhost:5500`.
+Credentials are enabled, so `*` is rejected during application startup.
+
+For local development:
+
+```bash
+export CORS_ALLOWED_ORIGINS=http://localhost:5500
+uvicorn app:app --reload
+```
+
+For production, set the variable to the deployed frontend origin (or comma-separated
+origins) before starting the backend, for example:
+
+```bash
+export CORS_ALLOWED_ORIGINS=https://app.example.com
+uvicorn app:app
+```
+
 API documentation:
 
 ```text
@@ -174,6 +197,18 @@ Frontend runs at:
 ```text
 http://localhost:5500
 ```
+
+### Configure the frontend API endpoint
+
+Edit `frontend/config.js` when the frontend needs to call a different backend. It uses
+`http://localhost:8000` for local development:
+
+```js
+window.ROUTE_OPTIMIZER_API_BASE_URL = "https://api.example.com";
+```
+
+Change this value for production; route optimization logic in `frontend/app.js` does not
+need to be edited.
 
 ---
 

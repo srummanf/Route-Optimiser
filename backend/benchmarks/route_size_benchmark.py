@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import contextlib
 import csv
 import datetime as dt
 import io
 import json
 import os
+import hashlib
 import sys
 import time
 from pathlib import Path
@@ -43,6 +45,9 @@ def main() -> int:
     args = parse_args()
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+    solver_time_limit_seconds = read_solver_time_limit_seconds(ROOT / "backend" / "solver.py")
+    effective_baseline_time_limit = max(args.baseline_time_limit, solver_time_limit_seconds)
+    module_hashes_before = production_module_hashes()
 
     fixture = FakeOSRMFixture(port=args.fixture_port)
     fixture.start()
@@ -74,25 +79,32 @@ def main() -> int:
                     baselines=baselines,
                     warmups=args.warmups,
                     repetitions=args.repetitions,
-                    baseline_time_limit=args.baseline_time_limit,
+                    baseline_time_limit=effective_baseline_time_limit,
                 )
             )
 
         save_baselines(baselines_path, baselines)
         write_coordinates(output_dir / "coordinates.json", coordinates_payload)
         write_raw_runs(output_dir / "raw_runs.csv", raw_rows)
+        module_hashes_after = production_module_hashes()
+        if module_hashes_after != module_hashes_before:
+            raise RuntimeError("production module contents changed during benchmark execution")
 
         summary = aggregate_runs(raw_rows)
         decisions = evaluate_thresholds(summary)
-        recommendation = choose_default_maximum(summary, decisions)
+        recommendation = choose_default_maximum(summary, decisions, solver_time_limit_seconds)
         context = {
             "run_date": dt.datetime.now(dt.timezone.utc).isoformat(),
             "fixture_base_url": fixture.base_url,
             "seed": args.seed,
             "warmup_repetitions": args.warmups,
             "measured_repetitions": args.repetitions,
-            "baseline_time_limit_seconds": args.baseline_time_limit,
+            "baseline_time_limit_seconds": effective_baseline_time_limit,
+            "requested_baseline_time_limit_seconds": args.baseline_time_limit,
+            "solver_time_limit_seconds": solver_time_limit_seconds,
             "public_network_used": not fixture.metrics.all_localhost(),
+            "production_modules_unchanged": True,
+            "production_module_hashes": module_hashes_after,
         }
         summary_payload = {
             "context": context,
@@ -287,6 +299,7 @@ def verify_report(report_path: Path) -> None:
         "## Table Results",
         "## Solver Results",
         "## Geometry Results",
+        "## Evidence Checks",
         "Recommended default maximum",
         "public_network_used: false",
     ]
@@ -305,6 +318,41 @@ def write_raw_runs(path: Path, rows: list[dict]) -> None:
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
+
+
+def read_solver_time_limit_seconds(path: Path) -> int:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Assign):
+            continue
+        if len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, ast.Attribute) or target.attr != "seconds":
+            continue
+        time_limit = target.value
+        if not isinstance(time_limit, ast.Attribute) or time_limit.attr != "time_limit":
+            continue
+        owner = time_limit.value
+        if not isinstance(owner, ast.Name) or owner.id != "search_parameters":
+            continue
+        if not isinstance(node.value, ast.Constant) or not isinstance(node.value.value, int):
+            raise RuntimeError("solver time limit is not an integer literal")
+        return node.value.value
+    raise RuntimeError("could not locate solver time limit in backend/solver.py")
+
+
+def production_module_hashes() -> dict[str, str]:
+    files = [
+        ROOT / "backend" / "app.py",
+        ROOT / "backend" / "osrm_service.py",
+        ROOT / "backend" / "solver.py",
+    ]
+    return {path.name: sha256_file(path) for path in files}
+
+
+def sha256_file(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 @contextlib.contextmanager

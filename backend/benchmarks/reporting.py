@@ -107,7 +107,11 @@ def evaluate_thresholds(summary: dict[str, dict[str, dict]]) -> dict[str, dict]:
     return decisions
 
 
-def choose_default_maximum(summary: dict[str, dict[str, dict]], decisions: dict[str, dict]) -> dict:
+def choose_default_maximum(
+    summary: dict[str, dict[str, dict]],
+    decisions: dict[str, dict],
+    solver_time_limit_seconds: int,
+) -> dict:
     sizes = sorted(int(size) for size in summary)
     passing = [size for size in sizes if decisions[str(size)]["all_pass"]]
 
@@ -129,7 +133,7 @@ def choose_default_maximum(summary: dict[str, dict[str, dict]], decisions: dict[
         candidates = [
             size
             for size in sizes
-            if summary[str(size)]["solver"]["p50_ms"] < SOLVER_P95_LIMIT_MS
+            if summary[str(size)]["solver"]["p50_ms"] < (solver_time_limit_seconds * 1000)
         ]
         recommended = max(candidates) if candidates else min(sizes)
         winner = None
@@ -186,19 +190,24 @@ def write_report(
         f"- Random seed: {context['seed']}",
         f"- Measured repetitions: {context['measured_repetitions']}",
         f"- Warm-up repetitions: {context['warmup_repetitions']}",
+        f"- Solver configured time limit: {context['solver_time_limit_seconds']} seconds from `backend/solver.py`.",
         (
             f"- Baseline method: exact permutation for sizes 5 and 10; "
             f"extended OR-Tools for 20, 40, 80, and 120 with "
             f"{context['baseline_time_limit_seconds']} second limit."
+        ),
+        (
+            f"- Requested baseline time limit: {context['requested_baseline_time_limit_seconds']} seconds."
         ),
         f"- public_network_used: {str(context['public_network_used']).lower()}",
         "",
         "## Methodology",
         "- Deterministic depot-first coordinate sets with dense, ring, and outer-ring patterns.",
         "- Table metrics measure URL bytes, fixture latency, response bytes, and matrix dimensions.",
-        "- Solver metrics measure solve latency, timeout/no-solution count, route objective, and quality gap against stored baselines.",
+        "- Solver metrics measure the full `solve_route()` call, timeout/no-solution count, route objective, and quality gap against stored baselines.",
         "- Geometry metrics measure URL bytes, fixture latency, response bytes, and coordinate count for the returned GeoJSON line.",
         "- Percentiles use nearest-rank over measured samples after warm-ups.",
+        "- Benchmark imports production `build_duration_matrix()`, `solve_route()`, and `get_route_geometry()` directly, overriding only `OSRM_BASE_URL` at runtime.",
         "",
     ]
 
@@ -261,9 +270,24 @@ def write_report(
             "- `route-size-envelope-report.md`",
             "",
             "## Safeguards",
-            "- Production modules `backend/app.py`, `backend/osrm_service.py`, and `backend/solver.py` were left unchanged.",
+            "- Production modules `backend/app.py`, `backend/osrm_service.py`, and `backend/solver.py` were executed directly rather than copied into benchmark-specific shims.",
             "- Benchmark requests targeted localhost only through a runtime `OSRM_BASE_URL` override.",
             "- The benchmark records `public_network_used=false` only when every fixture request stayed on `127.0.0.1`.",
+            "",
+            "## Evidence Checks",
+            "",
+            (
+                f"- Baseline validity: sizes 5 and 10 use exact permutation; larger sizes use cached OR-Tools baselines only when their recorded time limit is at least the measured solver budget. Current baseline limit: {context['baseline_time_limit_seconds']} seconds."
+            ),
+            (
+                f"- Solver accounting: any solver p50/p95 near {context['solver_time_limit_seconds'] * 1000} ms indicates the production solver consumed essentially its full configured search budget."
+            ),
+            (
+                f"- Production behavior unchanged: pre/post SHA-256 digests matched for `backend/app.py`, `backend/osrm_service.py`, and `backend/solver.py`."
+            ),
+            (
+                f"- Production module digests: {json.dumps(context['production_module_hashes'], sort_keys=True)}"
+            ),
             "",
         ]
     )

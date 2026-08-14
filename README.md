@@ -56,13 +56,14 @@ Leaflet Route Visualization
 ```text
 route-optimizer/
 
+requirements.txt
+constraints-py311.txt
+
 backend/
 │
 ├── app.py
 ├── solver.py
 ├── osrm_service.py
-├── requirements.txt
-
 frontend/
 │
 ├── index.html
@@ -79,13 +80,13 @@ README.md
 
 Install:
 
-- Python 3.11+
+- 64-bit CPython 3.11 on Linux x86_64 (the tested and supported runtime/platform)
 - Git
 
 Verify installation:
 
 ```bash
-python --version
+python --version  # must report Python 3.11.x
 git --version
 ```
 
@@ -125,11 +126,41 @@ source venv/bin/activate
 
 ### Install Dependencies
 
-```bash
-cd backend
+From the repository root, install the direct requirements together with the exact tested
+transitive dependency set:
 
-pip install -r requirements.txt
+```bash
+python -m pip install -r requirements.txt -c constraints-py311.txt
 ```
+
+If you have already changed into `backend`, use the equivalent paths:
+
+```bash
+python -m pip install -r ../requirements.txt -c ../constraints-py311.txt
+```
+
+`requirements.txt` pins the five direct application dependencies. `constraints-py311.txt`
+pins the complete resolution used for testing. Do not omit the constraints file when
+recreating the supported environment.
+
+### Updating and Reviewing Dependencies
+
+Perform dependency updates manually so each change is tested and reviewed:
+
+1. Create or activate a clean Python 3.11 virtual environment.
+2. Update the requested direct version in `requirements.txt`, install the temporary
+   tooling with `python -m pip install pip-tools`, and regenerate the lock input with
+   `pip-compile --output-file constraints-py311.txt requirements.txt` using the same
+   Python/platform target. Keep all direct and transitive versions exact.
+3. Install from the canonical command above and run the application smoke check: start
+   Uvicorn, open `/docs`, and submit a representative two-stop `/optimize` request.
+4. Run `python -m pip check` and review the dependency tree with
+   `python -m pip list --outdated`.
+5. Install `pip-audit` in the temporary environment if it is not already available, then
+   run `pip-audit -r constraints-py311.txt`. Resolve or document each reported
+   vulnerability before merging.
+6. Commit the updated requirements and constraints together, including the tested Python
+   and platform details in the change description.
 
 ---
 

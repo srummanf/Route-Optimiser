@@ -10,6 +10,7 @@ L.tileLayer(
 
 let markers = [];
 let routeLine = null;
+const API_BASE_URL = window.ROUTE_OPTIMIZER_API_BASE_URL;
 
 function refreshLabels() {
 
@@ -87,7 +88,7 @@ async function optimizeRoute() {
     });
 
     const response = await fetch(
-        "http://localhost:8000/optimize",
+        `${API_BASE_URL}/optimize`,
         {
             method: "POST",
             headers: {

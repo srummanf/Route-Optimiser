@@ -61,7 +61,8 @@ backend/
 ├── app.py
 ├── solver.py
 ├── osrm_service.py
-├── requirements.txt
+
+requirements.txt
 
 frontend/
 │
@@ -125,17 +126,44 @@ source venv/bin/activate
 
 ### Install Dependencies
 
-```bash
-cd backend
+From the repository root:
 
+```bash
 pip install -r requirements.txt
 ```
+
+---
+
+### Local Routing Configuration
+
+The backend reads OSRM configuration from environment variables at startup:
+
+```text
+OSRM_BASE_URL=https://router.project-osrm.org
+OSRM_TIMEOUT_SECONDS=30
+```
+
+Both variables are optional for local development. If they are not set, the backend uses the public
+OSRM host and a 30-second request timeout to preserve the default behavior.
+
+To use a self-hosted OSRM instance:
+
+```bash
+export OSRM_BASE_URL=http://localhost:5000
+export OSRM_TIMEOUT_SECONDS=10
+```
+
+`OSRM_BASE_URL` must be an absolute `http://` or `https://` URL. `OSRM_TIMEOUT_SECONDS` must be a
+positive finite number. Invalid values stop the FastAPI app during startup with an OSRM
+configuration error.
 
 ---
 
 ### Start FastAPI Server
 
 ```bash
+cd backend
+
 uvicorn app:app --reload
 ```
 

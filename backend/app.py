@@ -1,10 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from osrm_service import (
     build_duration_matrix,
-    get_route_geometry
+    get_route_geometry,
+    RoutingServiceError,
 )
 
 from solver import solve_route
@@ -33,30 +34,44 @@ class RouteRequest(BaseModel):
 def optimize_route(request: RouteRequest):
 
     if len(request.stops) < 2:
-        return {
-            "error": "Need at least 2 stops"
-        }
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "Need at least 2 stops"
+            },
+        )
 
     locations = [
         (s.lat, s.lng)
         for s in request.stops
     ]
 
-    duration_matrix, distance_matrix = (
-        build_duration_matrix(locations)
-    )
+    try:
+        duration_matrix, distance_matrix = (
+            build_duration_matrix(locations)
+        )
 
-    visit_order = solve_route(duration_matrix)
+        visit_order = solve_route(duration_matrix)
 
-    if not visit_order:
-        return {
-            "error": "No solution found"
-        }
+        if not visit_order:
+            return {
+                "error": "No solution found"
+            }
 
-    route_data = get_route_geometry(
-        locations,
-        visit_order
-    )
+        route_data = get_route_geometry(
+            locations,
+            visit_order
+        )
+    except RoutingServiceError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail={
+                "error": {
+                    "code": exc.code,
+                    "message": exc.message,
+                }
+            },
+        ) from exc
 
     return {
         "visit_order": visit_order,

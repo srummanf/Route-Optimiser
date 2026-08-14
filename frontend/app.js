@@ -10,6 +10,20 @@ L.tileLayer(
 
 let markers = [];
 let routeLine = null;
+let optimizeInFlight = false;
+let routeGeneration = 0;
+
+const optimizeBtn = document.getElementById("optimizeBtn");
+const stats = document.getElementById("stats");
+const defaultOptimizeLabel = optimizeBtn.textContent.trim();
+
+function setOptimizeLoading(isLoading) {
+
+    optimizeBtn.disabled = isLoading;
+    optimizeBtn.textContent = isLoading
+        ? "Optimizing..."
+        : defaultOptimizeLabel;
+}
 
 function refreshLabels() {
 
@@ -43,6 +57,8 @@ document
 .getElementById("clearBtn")
 .addEventListener("click", () => {
 
+    routeGeneration += 1;
+
     markers.forEach(
         m => map.removeLayer(m)
     );
@@ -51,21 +67,23 @@ document
 
     if(routeLine) {
         map.removeLayer(routeLine);
+        routeLine = null;
     }
 
-    document.getElementById(
-        "stats"
-    ).innerHTML = "Add stops on map";
+    stats.innerHTML = "Add stops on map";
 });
 
-document
-.getElementById("optimizeBtn")
+optimizeBtn
 .addEventListener(
     "click",
     optimizeRoute
 );
 
 async function optimizeRoute() {
+
+    if(optimizeInFlight) {
+        return;
+    }
 
     if(markers.length < 2) {
 
@@ -75,6 +93,12 @@ async function optimizeRoute() {
 
         return;
     }
+
+    optimizeInFlight = true;
+    setOptimizeLoading(true);
+    stats.innerHTML = "Optimizing route...";
+
+    const requestGeneration = routeGeneration;
 
     const stops = markers.map(m => {
 
@@ -86,42 +110,63 @@ async function optimizeRoute() {
         };
     });
 
-    const response = await fetch(
-        "http://localhost:8000/optimize",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type":
-                "application/json"
-            },
-            body: JSON.stringify({
-                stops
-            })
+    try {
+
+        const response = await fetch(
+            "http://localhost:8000/optimize",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                    "application/json"
+                },
+                body: JSON.stringify({
+                    stops
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if(requestGeneration !== routeGeneration) {
+            return;
         }
-    );
 
-    const result = await response.json();
+        if(result.error) {
 
-    if(result.error) {
+            alert(result.error);
 
-        alert(result.error);
+            stats.innerHTML = result.error;
 
-        return;
+            return;
+        }
+
+        drawRoute(result.geometry);
+
+        stats.innerHTML = `
+            Stops: ${markers.length}<br>
+            Distance:
+            ${(result.total_distance_m/1000).toFixed(2)}
+            km<br>
+            Duration:
+            ${result.total_duration_min}
+            min
+        `;
     }
+    catch(error) {
 
-    drawRoute(result.geometry);
+        if(requestGeneration === routeGeneration) {
 
-    document.getElementById(
-        "stats"
-    ).innerHTML = `
-        Stops: ${markers.length}<br>
-        Distance:
-        ${(result.total_distance_m/1000).toFixed(2)}
-        km<br>
-        Duration:
-        ${result.total_duration_min}
-        min
-    `;
+            alert("Optimization failed");
+
+            stats.innerHTML = "Optimization failed";
+        }
+    }
+    finally {
+
+        optimizeInFlight = false;
+        setOptimizeLoading(false);
+    }
 }
 
 function drawRoute(geometry) {

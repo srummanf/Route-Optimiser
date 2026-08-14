@@ -55,22 +55,17 @@ Leaflet Route Visualization
 
 ```text
 route-optimizer/
-
-backend/
-│
-├── app.py
-├── solver.py
-├── osrm_service.py
 ├── requirements.txt
-
-frontend/
-│
-├── index.html
-├── app.js
-├── style.css
-
-.gitignore
-README.md
+├── .gitignore
+├── README.md
+├── backend/
+│   ├── app.py
+│   ├── solver.py
+│   └── osrm_service.py
+└── frontend/
+    ├── index.html
+    ├── app.js
+    └── style.css
 ```
 
 ---
@@ -125,15 +120,29 @@ source venv/bin/activate
 
 ### Install Dependencies
 
-```bash
-cd backend
+From the repository root:
 
+```bash
 pip install -r requirements.txt
 ```
 
 ---
 
+### Backend Sanity Check
+
+Run this from the backend directory to verify the FastAPI app imports correctly with its sibling modules:
+
+```bash
+cd backend
+
+python -c "import app; print(app.app.title)"
+```
+
+---
+
 ### Start FastAPI Server
+
+From the backend directory:
 
 ```bash
 uvicorn app:app --reload

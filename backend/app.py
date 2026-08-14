@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -9,15 +11,36 @@ from osrm_service import (
 
 from solver import solve_route
 
-app = FastAPI()
+DEFAULT_ALLOWED_ORIGIN = "http://localhost:5500"
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
+def get_allowed_origins(value: str | None = None) -> list[str]:
+    """Return configured origins and refuse wildcard credentialed CORS."""
+    configured = os.getenv("CORS_ALLOWED_ORIGINS") if value is None else value
+    origins = [origin.strip() for origin in (configured or DEFAULT_ALLOWED_ORIGIN).split(",")]
+    origins = [origin for origin in origins if origin]
+
+    if not origins or "*" in origins:
+        raise ValueError(
+            "CORS_ALLOWED_ORIGINS cannot contain '*' when credentials are enabled"
+        )
+
+    return origins
+
+
+def create_app(allowed_origins: str | None = None) -> FastAPI:
+    application = FastAPI()
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=get_allowed_origins(allowed_origins),
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    return application
+
+
+app = create_app()
 
 
 class Stop(BaseModel):

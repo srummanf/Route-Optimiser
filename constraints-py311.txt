@@ -1,0 +1,25 @@
+# Generated and tested with CPython 3.11 on 64-bit Linux.
+# Keep this file in sync with requirements.txt when updating dependencies.
+absl-py==2.5.0
+annotated-types==0.8.0
+anyio==4.14.2
+certifi==2026.7.22
+charset-normalizer==3.5.0
+click==8.4.2
+fastapi==0.115.6
+h11==0.16.0
+idna==3.18
+immutabledict==4.3.1
+numpy==2.4.6
+ortools==9.12.4544
+pandas==3.0.5
+protobuf==5.29.6
+pydantic==2.10.5
+pydantic-core==2.27.2
+python-dateutil==2.9.0.post0
+requests==2.32.3
+six==1.17.0
+starlette==0.41.3
+typing-extensions==4.16.0
+urllib3==2.7.0
+uvicorn==0.34.0

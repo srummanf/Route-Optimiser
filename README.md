@@ -139,6 +139,16 @@ pip install -r requirements.txt
 uvicorn app:app --reload
 ```
 
+### Run Backend Tests
+
+From the repository root, run the deterministic backend regression suite with:
+
+```bash
+pytest backend/tests
+```
+
+The endpoint tests mock OSRM table and route responses, so this command does not make network calls.
+
 Server runs at:
 
 ```text

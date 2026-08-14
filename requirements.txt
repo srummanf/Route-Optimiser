@@ -3,3 +3,5 @@ uvicorn
 requests 
 ortools 
 pydantic
+pytest
+httpx

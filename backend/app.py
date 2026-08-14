@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 from osrm_service import (
     build_duration_matrix,
@@ -10,6 +10,8 @@ from osrm_service import (
 from solver import solve_route
 
 app = FastAPI()
+
+MAX_STOPS = 25
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,6 +29,26 @@ class Stop(BaseModel):
 
 class RouteRequest(BaseModel):
     stops: list[Stop]
+
+    @validator("stops")
+    def validate_max_stops(cls, stops):
+        if len(stops) > MAX_STOPS:
+            raise ValueError(
+                f"Route optimization supports at most {MAX_STOPS} stops"
+            )
+
+        return stops
+
+
+class ConfigResponse(BaseModel):
+    max_stops: int
+
+
+@app.get("/config", response_model=ConfigResponse)
+def get_config():
+    return {
+        "max_stops": MAX_STOPS
+    }
 
 
 @app.post("/optimize")

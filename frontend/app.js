@@ -10,6 +10,45 @@ L.tileLayer(
 
 let markers = [];
 let routeLine = null;
+let maxStops = null;
+
+const API_BASE_URL = "http://localhost:8000";
+
+loadConfig();
+
+async function loadConfig() {
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/config`
+        );
+
+        if(!response.ok) {
+            throw new Error(
+                "Unable to load route limits"
+            );
+        }
+
+        const config = await response.json();
+
+        maxStops = config.max_stops;
+    } catch(error) {
+
+        showError(
+            "Unable to load route limits"
+        );
+    }
+}
+
+function showError(message) {
+
+    document.getElementById(
+        "stats"
+    ).innerHTML = message;
+
+    alert(message);
+}
 
 function refreshLabels() {
 
@@ -69,8 +108,26 @@ async function optimizeRoute() {
 
     if(markers.length < 2) {
 
-        alert(
+        showError(
             "Need at least 2 stops"
+        );
+
+        return;
+    }
+
+    if(maxStops === null) {
+
+        showError(
+            "Route limits are still loading"
+        );
+
+        return;
+    }
+
+    if(markers.length > maxStops) {
+
+        showError(
+            `Routes can include at most ${maxStops} stops`
         );
 
         return;
@@ -87,7 +144,7 @@ async function optimizeRoute() {
     });
 
     const response = await fetch(
-        "http://localhost:8000/optimize",
+        `${API_BASE_URL}/optimize`,
         {
             method: "POST",
             headers: {
@@ -104,7 +161,7 @@ async function optimizeRoute() {
 
     if(result.error) {
 
-        alert(result.error);
+        showError(result.error);
 
         return;
     }

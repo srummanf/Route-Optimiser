@@ -28,4 +28,23 @@ button {
 .stats {
     margin-top: 10px;
     font-size: 14px;
+    max-width: 280px;
+    line-height: 1.35;
+}
+
+.route-status {
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.route-status--pending {
+    color: #475569;
+}
+
+.route-status--success {
+    color: #166534;
+}
+
+.route-status--error {
+    color: #b91c1c;
 }

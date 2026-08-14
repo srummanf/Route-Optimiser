@@ -10,6 +10,8 @@ L.tileLayer(
 
 let markers = [];
 let routeLine = null;
+const RETRYABLE_ROUTING_MESSAGE =
+    "Routing is temporarily unavailable. Please retry the request.";
 
 function refreshLabels() {
 
@@ -49,9 +51,7 @@ document
 
     markers = [];
 
-    if(routeLine) {
-        map.removeLayer(routeLine);
-    }
+    clearRoute();
 
     document.getElementById(
         "stats"
@@ -86,19 +86,38 @@ async function optimizeRoute() {
         };
     });
 
-    const response = await fetch(
-        "http://localhost:8000/optimize",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type":
-                "application/json"
-            },
-            body: JSON.stringify({
-                stops
-            })
-        }
-    );
+    let response;
+
+    try {
+        response = await fetch(
+            "http://localhost:8000/optimize",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type":
+                    "application/json"
+                },
+                body: JSON.stringify({
+                    stops
+                })
+            }
+        );
+    } catch(error) {
+        displayRoutingError(
+            RETRYABLE_ROUTING_MESSAGE
+        );
+
+        return;
+    }
+
+    if(!response.ok) {
+
+        displayRoutingError(
+            await readRoutingErrorMessage(response)
+        );
+
+        return;
+    }
 
     const result = await response.json();
 
@@ -124,12 +143,44 @@ async function optimizeRoute() {
     `;
 }
 
-function drawRoute(geometry) {
+async function readRoutingErrorMessage(response) {
+
+    try {
+        const body = await response.json();
+        const message = body
+        && body.detail
+        && body.detail.error
+        && body.detail.error.message;
+
+        if(typeof message === "string" && message.trim()) {
+            return message;
+        }
+    } catch(error) {
+        // Malformed error bodies are still retryable routing failures.
+    }
+
+    return RETRYABLE_ROUTING_MESSAGE;
+}
+
+function displayRoutingError(message) {
+
+    clearRoute();
+
+    alert(message);
+}
+
+function clearRoute() {
 
     if(routeLine) {
 
         map.removeLayer(routeLine);
+        routeLine = null;
     }
+}
+
+function drawRoute(geometry) {
+
+    clearRoute();
 
     const points = geometry.map(
         coord => [

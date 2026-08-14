@@ -185,6 +185,11 @@ http://localhost:5500
 - Click anywhere on the map.
 - Each click creates a delivery stop.
 - Markers can be dragged to adjust locations.
+- Add at least 2 stops and no more than 25 stops.
+
+The 25-stop limit is inclusive. The backend owns this limit and exposes it through `GET /config`; the frontend reads that value before optimizing and blocks larger marker sets without calling `POST /optimize`.
+
+Route optimization first asks OSRM for a duration and distance matrix. Matrix size grows quadratically with stop count, so 25 stops already means 625 origin/destination cells before OR-Tools starts solving. Bounding stop count protects latency and avoids sending oversized work to OSRM or the solver.
 
 ### Optimize Route
 
@@ -310,6 +315,20 @@ POST /optimize
       "lng": 88.3400
     }
   ]
+}
+```
+
+Requests with more than 25 stops return FastAPI's structured `422` validation response before OSRM or OR-Tools is called.
+
+### Config
+
+```http
+GET /config
+```
+
+```json
+{
+  "max_stops": 25
 }
 ```
 

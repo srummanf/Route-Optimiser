@@ -1,0 +1,480 @@
+{
+  "context": {
+    "baseline_time_limit_seconds": 20,
+    "fixture_base_url": "http://127.0.0.1:36155",
+    "measured_repetitions": 3,
+    "public_network_used": false,
+    "run_date": "2026-08-14T04:31:36.122319+00:00",
+    "seed": 81017,
+    "warmup_repetitions": 1
+  },
+  "decisions": {
+    "10": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.048
+    },
+    "120": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.037
+    },
+    "20": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.016
+    },
+    "40": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.013
+    },
+    "5": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.036
+    },
+    "80": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.012
+    }
+  },
+  "recommendation": {
+    "first_failing_geometry_size": null,
+    "first_failing_solver_size": 5,
+    "first_failing_table_size": null,
+    "largest_passing_size": null,
+    "provisional": true,
+    "rationale": "provisional fallback because no size passed every hard threshold",
+    "recommended_default_maximum": 5
+  },
+  "summary": {
+    "10": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 261.0,
+          "min": 261.0,
+          "p50": 261.0,
+          "p95": 261.0
+        },
+        "max_ms": 6.407,
+        "mean_ms": 4.132,
+        "min_ms": 2.216,
+        "p50_ms": 3.772,
+        "p95_ms": 6.407,
+        "response_bytes": {
+          "max": 6317.0,
+          "min": 6317.0,
+          "p50": 6317.0,
+          "p95": 6317.0
+        },
+        "url_bytes": {
+          "max": 316.0,
+          "min": 316.0,
+          "p50": 316.0,
+          "p95": 316.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30012.023,
+        "mean_ms": 30004.818,
+        "min_ms": 30001.194,
+        "none_count": 0,
+        "objective": {
+          "max": 4311.0,
+          "min": 4311.0,
+          "p50": 4311.0,
+          "p95": 4311.0
+        },
+        "p50_ms": 30001.238,
+        "p95_ms": 30012.023,
+        "quality_gap_pct": {
+          "max": 0.0,
+          "min": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 2.924,
+        "mean_ms": 1.973,
+        "min_ms": 1.435,
+        "p50_ms": 1.561,
+        "p95_ms": 2.924,
+        "response_bytes": {
+          "max": 954.0,
+          "min": 954.0,
+          "p50": 954.0,
+          "p95": 954.0
+        },
+        "url_bytes": {
+          "max": 283.0,
+          "min": 283.0,
+          "p50": 283.0,
+          "p95": 283.0
+        }
+      }
+    },
+    "120": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 1210.0,
+          "min": 1210.0,
+          "p50": 1210.0,
+          "p95": 1210.0
+        },
+        "max_ms": 13.443,
+        "mean_ms": 10.412,
+        "min_ms": 8.331,
+        "p50_ms": 9.463,
+        "p95_ms": 13.443,
+        "response_bytes": {
+          "max": 28881.0,
+          "min": 28881.0,
+          "p50": 28881.0,
+          "p95": 28881.0
+        },
+        "url_bytes": {
+          "max": 2714.0,
+          "min": 2714.0,
+          "p50": 2714.0,
+          "p95": 2714.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30009.149,
+        "mean_ms": 30004.789,
+        "min_ms": 30002.095,
+        "none_count": 0,
+        "objective": {
+          "max": 17259.0,
+          "min": 17259.0,
+          "p50": 17259.0,
+          "p95": 17259.0
+        },
+        "p50_ms": 30003.123,
+        "p95_ms": 30009.149,
+        "quality_gap_pct": {
+          "max": -0.093,
+          "min": -0.093,
+          "p50": -0.093,
+          "p95": -0.093
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 48.585,
+        "mean_ms": 45.553,
+        "min_ms": 42.081,
+        "p50_ms": 45.993,
+        "p95_ms": 48.585,
+        "response_bytes": {
+          "max": 135213.0,
+          "min": 135213.0,
+          "p50": 135213.0,
+          "p95": 135213.0
+        },
+        "url_bytes": {
+          "max": 2681.0,
+          "min": 2681.0,
+          "p50": 2681.0,
+          "p95": 2681.0
+        }
+      }
+    },
+    "20": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 409.0,
+          "min": 409.0,
+          "p50": 409.0,
+          "p95": 409.0
+        },
+        "max_ms": 5.02,
+        "mean_ms": 4.094,
+        "min_ms": 2.548,
+        "p50_ms": 4.713,
+        "p95_ms": 5.02,
+        "response_bytes": {
+          "max": 9828.0,
+          "min": 9828.0,
+          "p50": 9828.0,
+          "p95": 9828.0
+        },
+        "url_bytes": {
+          "max": 532.0,
+          "min": 532.0,
+          "p50": 532.0,
+          "p95": 532.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30004.084,
+        "mean_ms": 30003.678,
+        "min_ms": 30003.123,
+        "none_count": 0,
+        "objective": {
+          "max": 6778.0,
+          "min": 6778.0,
+          "p50": 6778.0,
+          "p95": 6778.0
+        },
+        "p50_ms": 30003.826,
+        "p95_ms": 30004.084,
+        "quality_gap_pct": {
+          "max": 0.0,
+          "min": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 7.117,
+        "mean_ms": 5.816,
+        "min_ms": 3.687,
+        "p50_ms": 6.645,
+        "p95_ms": 7.117,
+        "response_bytes": {
+          "max": 3725.0,
+          "min": 3725.0,
+          "p50": 3725.0,
+          "p95": 3725.0
+        },
+        "url_bytes": {
+          "max": 499.0,
+          "min": 499.0,
+          "p50": 499.0,
+          "p95": 499.0
+        }
+      }
+    },
+    "40": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 677.0,
+          "min": 677.0,
+          "p50": 677.0,
+          "p95": 677.0
+        },
+        "max_ms": 9.693,
+        "mean_ms": 7.78,
+        "min_ms": 5.037,
+        "p50_ms": 8.611,
+        "p95_ms": 9.693,
+        "response_bytes": {
+          "max": 16203.0,
+          "min": 16203.0,
+          "p50": 16203.0,
+          "p95": 16203.0
+        },
+        "url_bytes": {
+          "max": 972.0,
+          "min": 972.0,
+          "p50": 972.0,
+          "p95": 972.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30003.201,
+        "mean_ms": 30002.177,
+        "min_ms": 30001.481,
+        "none_count": 0,
+        "objective": {
+          "max": 11327.0,
+          "min": 11327.0,
+          "p50": 11327.0,
+          "p95": 11327.0
+        },
+        "p50_ms": 30001.85,
+        "p95_ms": 30003.201,
+        "quality_gap_pct": {
+          "max": 0.0,
+          "min": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 8.428,
+        "mean_ms": 7.979,
+        "min_ms": 7.406,
+        "p50_ms": 8.102,
+        "p95_ms": 8.428,
+        "response_bytes": {
+          "max": 14944.0,
+          "min": 14944.0,
+          "p50": 14944.0,
+          "p95": 14944.0
+        },
+        "url_bytes": {
+          "max": 939.0,
+          "min": 939.0,
+          "p50": 939.0,
+          "p95": 939.0
+        }
+      }
+    },
+    "5": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 131.0,
+          "min": 131.0,
+          "p50": 131.0,
+          "p95": 131.0
+        },
+        "max_ms": 5.529,
+        "mean_ms": 3.983,
+        "min_ms": 2.129,
+        "p50_ms": 4.292,
+        "p95_ms": 5.529,
+        "response_bytes": {
+          "max": 3224.0,
+          "min": 3224.0,
+          "p50": 3224.0,
+          "p95": 3224.0
+        },
+        "url_bytes": {
+          "max": 207.0,
+          "min": 207.0,
+          "p50": 207.0,
+          "p95": 207.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30008.885,
+        "mean_ms": 30005.827,
+        "min_ms": 30001.09,
+        "none_count": 0,
+        "objective": {
+          "max": 2153.0,
+          "min": 2153.0,
+          "p50": 2153.0,
+          "p95": 2153.0
+        },
+        "p50_ms": 30007.505,
+        "p95_ms": 30008.885,
+        "quality_gap_pct": {
+          "max": 0.0,
+          "min": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 4.648,
+        "mean_ms": 3.895,
+        "min_ms": 3.253,
+        "p50_ms": 3.784,
+        "p95_ms": 4.648,
+        "response_bytes": {
+          "max": 261.0,
+          "min": 261.0,
+          "p50": 261.0,
+          "p95": 261.0
+        },
+        "url_bytes": {
+          "max": 174.0,
+          "min": 174.0,
+          "p50": 174.0,
+          "p95": 174.0
+        }
+      }
+    },
+    "80": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 958.0,
+          "min": 958.0,
+          "p50": 958.0,
+          "p95": 958.0
+        },
+        "max_ms": 11.303,
+        "mean_ms": 9.66,
+        "min_ms": 8.261,
+        "p50_ms": 9.415,
+        "p95_ms": 11.303,
+        "response_bytes": {
+          "max": 22898.0,
+          "min": 22898.0,
+          "p50": 22898.0,
+          "p95": 22898.0
+        },
+        "url_bytes": {
+          "max": 1844.0,
+          "min": 1844.0,
+          "p50": 1844.0,
+          "p95": 1844.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30002.879,
+        "mean_ms": 30002.179,
+        "min_ms": 30001.736,
+        "none_count": 0,
+        "objective": {
+          "max": 14522.0,
+          "min": 14522.0,
+          "p50": 14522.0,
+          "p95": 14522.0
+        },
+        "p50_ms": 30001.921,
+        "p95_ms": 30002.879,
+        "quality_gap_pct": {
+          "max": 0.0,
+          "min": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 20.587,
+        "mean_ms": 19.939,
+        "min_ms": 18.964,
+        "p50_ms": 20.265,
+        "p95_ms": 20.587,
+        "response_bytes": {
+          "max": 59955.0,
+          "min": 59955.0,
+          "p50": 59955.0,
+          "p95": 59955.0
+        },
+        "url_bytes": {
+          "max": 1811.0,
+          "min": 1811.0,
+          "p50": 1811.0,
+          "p95": 1811.0
+        }
+      }
+    }
+  }
+}

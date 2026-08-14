@@ -123,3 +123,4 @@ cache/
 
 local_settings.py
 config.local.json
+.mindlap/config.json

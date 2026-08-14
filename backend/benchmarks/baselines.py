@@ -25,8 +25,9 @@ def ensure_baseline(
     time_limit_seconds: int,
 ) -> dict:
     key = str(size)
-    if key in baselines:
-        return baselines[key]
+    existing = baselines.get(key)
+    if existing is not None and baseline_is_usable(existing, size, time_limit_seconds):
+        return existing
 
     if size <= 10:
         objective, route = compute_exact_baseline(duration_matrix)
@@ -43,6 +44,19 @@ def ensure_baseline(
         "time_limit_seconds": time_limit_seconds if size > 10 else None,
     }
     return baselines[key]
+
+
+def baseline_is_usable(baseline: dict, size: int, time_limit_seconds: int) -> bool:
+    if baseline.get("size") != size:
+        return False
+
+    if size <= 10:
+        return baseline.get("method") == "exact_permutation"
+
+    return (
+        baseline.get("method") == "extended_ortools"
+        and int(baseline.get("time_limit_seconds") or 0) >= time_limit_seconds
+    )
 
 
 def compute_exact_baseline(duration_matrix: list[list[int]]) -> tuple[int, list[int]]:

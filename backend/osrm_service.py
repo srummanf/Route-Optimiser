@@ -1,6 +1,61 @@
+from numbers import Real
+
 import requests
 
 OSRM_BASE_URL = "https://router.project-osrm.org"
+ROUTING_ERROR_CODE = "routing_upstream_error"
+ROUTING_ERROR_MESSAGE = (
+    "Routing provider returned an invalid or unavailable response. "
+    "Please retry the request."
+)
+
+
+class RoutingServiceError(Exception):
+    def __init__(self, message=ROUTING_ERROR_MESSAGE):
+        super().__init__(message)
+        self.code = ROUTING_ERROR_CODE
+        self.message = message
+
+
+def _request_json(url):
+    try:
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+        return response.json()
+    except (
+        requests.RequestException,
+        ValueError,
+        TypeError,
+    ) as exc:
+        raise RoutingServiceError() from exc
+
+
+def _is_number(value):
+    return (
+        isinstance(value, Real)
+        and not isinstance(value, bool)
+    )
+
+
+def _validate_matrix(matrix, expected_size):
+    if (
+        not isinstance(matrix, list)
+        or len(matrix) != expected_size
+    ):
+        raise RoutingServiceError()
+
+    for row in matrix:
+        if (
+            not isinstance(row, list)
+            or len(row) != expected_size
+        ):
+            raise RoutingServiceError()
+
+        for value in row:
+            if not _is_number(value):
+                raise RoutingServiceError()
+
+    return matrix
 
 
 def build_duration_matrix(locations):
@@ -23,12 +78,24 @@ def build_duration_matrix(locations):
         "?annotations=duration,distance"
     )
 
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
+    data = _request_json(url)
 
-    data = response.json()
+    if (
+        not isinstance(data, dict)
+        or data.get("code") != "Ok"
+    ):
+        raise RoutingServiceError()
 
-    return data["durations"], data["distances"]
+    duration_matrix = _validate_matrix(
+        data.get("durations"),
+        len(locations),
+    )
+    distance_matrix = _validate_matrix(
+        data.get("distances"),
+        len(locations),
+    )
+
+    return duration_matrix, distance_matrix
 
 
 def get_route_geometry(locations, visit_order):
@@ -51,12 +118,29 @@ def get_route_geometry(locations, visit_order):
         "&steps=false"
     )
 
-    response = requests.get(url, timeout=30)
-    response.raise_for_status()
+    data = _request_json(url)
 
-    data = response.json()
+    if (
+        not isinstance(data, dict)
+        or data.get("code") != "Ok"
+        or not isinstance(data.get("routes"), list)
+        or not data["routes"]
+    ):
+        raise RoutingServiceError()
 
     route = data["routes"][0]
+
+    if (
+        not isinstance(route, dict)
+        or not _is_number(route.get("distance"))
+        or not _is_number(route.get("duration"))
+        or not isinstance(route.get("geometry"), dict)
+        or not isinstance(
+            route["geometry"].get("coordinates"),
+            list
+        )
+    ):
+        raise RoutingServiceError()
 
     return {
         "distance": route["distance"],

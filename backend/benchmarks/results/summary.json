@@ -1,0 +1,488 @@
+{
+  "context": {
+    "baseline_time_limit_seconds": 30,
+    "fixture_base_url": "http://127.0.0.1:46623",
+    "measured_repetitions": 3,
+    "production_module_hashes": {
+      "app.py": "7a9d8405ddfd062f1410e3104158948b06c7a3c7e5825b89869aa2cfdde56aa7",
+      "osrm_service.py": "036154b83037d75dac35e1e9eea843e381db968511efeb63eaf5fa6394b440ad",
+      "solver.py": "d00f3409b85817db272a74d9cc687d6a80594780b925167f60cfb9f4f1789f19"
+    },
+    "production_modules_unchanged": true,
+    "public_network_used": false,
+    "requested_baseline_time_limit_seconds": 30,
+    "run_date": "2026-08-14T04:49:54.253058+00:00",
+    "seed": 81017,
+    "solver_time_limit_seconds": 30,
+    "warmup_repetitions": 1
+  },
+  "decisions": {
+    "10": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.005
+    },
+    "120": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.005
+    },
+    "20": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.006
+    },
+    "40": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.006
+    },
+    "5": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.005
+    },
+    "80": {
+      "all_pass": false,
+      "geometry_pass": true,
+      "solver_pass": false,
+      "table_pass": true,
+      "threshold_margin_pct": -20.01
+    }
+  },
+  "recommendation": {
+    "first_failing_geometry_size": null,
+    "first_failing_solver_size": 5,
+    "first_failing_table_size": null,
+    "largest_passing_size": null,
+    "provisional": true,
+    "rationale": "provisional fallback because no size passed every hard threshold",
+    "recommended_default_maximum": 5
+  },
+  "summary": {
+    "10": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 261.0,
+          "min": 261.0,
+          "p50": 261.0,
+          "p95": 261.0
+        },
+        "max_ms": 2.418,
+        "mean_ms": 2.352,
+        "min_ms": 2.244,
+        "p50_ms": 2.395,
+        "p95_ms": 2.418,
+        "response_bytes": {
+          "max": 6317.0,
+          "min": 6317.0,
+          "p50": 6317.0,
+          "p95": 6317.0
+        },
+        "url_bytes": {
+          "max": 316.0,
+          "min": 316.0,
+          "p50": 316.0,
+          "p95": 316.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30001.359,
+        "mean_ms": 30001.297,
+        "min_ms": 30001.238,
+        "none_count": 0,
+        "objective": {
+          "max": 4311.0,
+          "min": 4311.0,
+          "p50": 4311.0,
+          "p95": 4311.0
+        },
+        "p50_ms": 30001.294,
+        "p95_ms": 30001.359,
+        "quality_gap_pct": {
+          "max": 0.0,
+          "min": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 1.489,
+        "mean_ms": 1.445,
+        "min_ms": 1.399,
+        "p50_ms": 1.446,
+        "p95_ms": 1.489,
+        "response_bytes": {
+          "max": 954.0,
+          "min": 954.0,
+          "p50": 954.0,
+          "p95": 954.0
+        },
+        "url_bytes": {
+          "max": 283.0,
+          "min": 283.0,
+          "p50": 283.0,
+          "p95": 283.0
+        }
+      }
+    },
+    "120": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 1199.0,
+          "min": 1199.0,
+          "p50": 1199.0,
+          "p95": 1199.0
+        },
+        "max_ms": 5.135,
+        "mean_ms": 5.11,
+        "min_ms": 5.076,
+        "p50_ms": 5.118,
+        "p95_ms": 5.135,
+        "response_bytes": {
+          "max": 28630.0,
+          "min": 28630.0,
+          "p50": 28630.0,
+          "p95": 28630.0
+        },
+        "url_bytes": {
+          "max": 2714.0,
+          "min": 2714.0,
+          "p50": 2714.0,
+          "p95": 2714.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30001.286,
+        "mean_ms": 30001.279,
+        "min_ms": 30001.274,
+        "none_count": 0,
+        "objective": {
+          "max": 17154.0,
+          "min": 17154.0,
+          "p50": 17154.0,
+          "p95": 17154.0
+        },
+        "p50_ms": 30001.278,
+        "p95_ms": 30001.286,
+        "quality_gap_pct": {
+          "max": 0.175,
+          "min": 0.175,
+          "p50": 0.175,
+          "p95": 0.175
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 22.132,
+        "mean_ms": 21.776,
+        "min_ms": 21.391,
+        "p50_ms": 21.804,
+        "p95_ms": 22.132,
+        "response_bytes": {
+          "max": 135213.0,
+          "min": 135213.0,
+          "p50": 135213.0,
+          "p95": 135213.0
+        },
+        "url_bytes": {
+          "max": 2681.0,
+          "min": 2681.0,
+          "p50": 2681.0,
+          "p95": 2681.0
+        }
+      }
+    },
+    "20": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 409.0,
+          "min": 409.0,
+          "p50": 409.0,
+          "p95": 409.0
+        },
+        "max_ms": 2.804,
+        "mean_ms": 2.78,
+        "min_ms": 2.745,
+        "p50_ms": 2.791,
+        "p95_ms": 2.804,
+        "response_bytes": {
+          "max": 9828.0,
+          "min": 9828.0,
+          "p50": 9828.0,
+          "p95": 9828.0
+        },
+        "url_bytes": {
+          "max": 532.0,
+          "min": 532.0,
+          "p50": 532.0,
+          "p95": 532.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30001.615,
+        "mean_ms": 30001.463,
+        "min_ms": 30001.351,
+        "none_count": 0,
+        "objective": {
+          "max": 6778.0,
+          "min": 6778.0,
+          "p50": 6778.0,
+          "p95": 6778.0
+        },
+        "p50_ms": 30001.424,
+        "p95_ms": 30001.615,
+        "quality_gap_pct": {
+          "max": 0.0,
+          "min": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 2.239,
+        "mean_ms": 2.033,
+        "min_ms": 1.896,
+        "p50_ms": 1.963,
+        "p95_ms": 2.239,
+        "response_bytes": {
+          "max": 3725.0,
+          "min": 3725.0,
+          "p50": 3725.0,
+          "p95": 3725.0
+        },
+        "url_bytes": {
+          "max": 499.0,
+          "min": 499.0,
+          "p50": 499.0,
+          "p95": 499.0
+        }
+      }
+    },
+    "40": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 677.0,
+          "min": 677.0,
+          "p50": 677.0,
+          "p95": 677.0
+        },
+        "max_ms": 3.783,
+        "mean_ms": 3.489,
+        "min_ms": 3.313,
+        "p50_ms": 3.37,
+        "p95_ms": 3.783,
+        "response_bytes": {
+          "max": 16203.0,
+          "min": 16203.0,
+          "p50": 16203.0,
+          "p95": 16203.0
+        },
+        "url_bytes": {
+          "max": 972.0,
+          "min": 972.0,
+          "p50": 972.0,
+          "p95": 972.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30001.55,
+        "mean_ms": 30001.536,
+        "min_ms": 30001.524,
+        "none_count": 0,
+        "objective": {
+          "max": 11327.0,
+          "min": 11327.0,
+          "p50": 11327.0,
+          "p95": 11327.0
+        },
+        "p50_ms": 30001.535,
+        "p95_ms": 30001.55,
+        "quality_gap_pct": {
+          "max": 0.0,
+          "min": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 3.865,
+        "mean_ms": 3.8,
+        "min_ms": 3.691,
+        "p50_ms": 3.843,
+        "p95_ms": 3.865,
+        "response_bytes": {
+          "max": 14944.0,
+          "min": 14944.0,
+          "p50": 14944.0,
+          "p95": 14944.0
+        },
+        "url_bytes": {
+          "max": 939.0,
+          "min": 939.0,
+          "p50": 939.0,
+          "p95": 939.0
+        }
+      }
+    },
+    "5": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 131.0,
+          "min": 131.0,
+          "p50": 131.0,
+          "p95": 131.0
+        },
+        "max_ms": 2.483,
+        "mean_ms": 2.307,
+        "min_ms": 2.181,
+        "p50_ms": 2.256,
+        "p95_ms": 2.483,
+        "response_bytes": {
+          "max": 3224.0,
+          "min": 3224.0,
+          "p50": 3224.0,
+          "p95": 3224.0
+        },
+        "url_bytes": {
+          "max": 207.0,
+          "min": 207.0,
+          "p50": 207.0,
+          "p95": 207.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30001.199,
+        "mean_ms": 30001.194,
+        "min_ms": 30001.191,
+        "none_count": 0,
+        "objective": {
+          "max": 2153.0,
+          "min": 2153.0,
+          "p50": 2153.0,
+          "p95": 2153.0
+        },
+        "p50_ms": 30001.193,
+        "p95_ms": 30001.199,
+        "quality_gap_pct": {
+          "max": 0.0,
+          "min": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 1.541,
+        "mean_ms": 1.429,
+        "min_ms": 1.281,
+        "p50_ms": 1.465,
+        "p95_ms": 1.541,
+        "response_bytes": {
+          "max": 261.0,
+          "min": 261.0,
+          "p50": 261.0,
+          "p95": 261.0
+        },
+        "url_bytes": {
+          "max": 174.0,
+          "min": 174.0,
+          "p50": 174.0,
+          "p95": 174.0
+        }
+      }
+    },
+    "80": {
+      "geometry": {
+        "count": 3,
+        "geometry_coordinate_count": {
+          "max": 962.0,
+          "min": 962.0,
+          "p50": 962.0,
+          "p95": 962.0
+        },
+        "max_ms": 5.217,
+        "mean_ms": 4.82,
+        "min_ms": 4.422,
+        "p50_ms": 4.82,
+        "p95_ms": 5.217,
+        "response_bytes": {
+          "max": 22993.0,
+          "min": 22992.0,
+          "p50": 22993.0,
+          "p95": 22993.0
+        },
+        "url_bytes": {
+          "max": 1844.0,
+          "min": 1844.0,
+          "p50": 1844.0,
+          "p95": 1844.0
+        }
+      },
+      "solver": {
+        "count": 3,
+        "max_ms": 30002.492,
+        "mean_ms": 30001.914,
+        "min_ms": 30001.212,
+        "none_count": 0,
+        "objective": {
+          "max": 14505.0,
+          "min": 14503.0,
+          "p50": 14505.0,
+          "p95": 14505.0
+        },
+        "p50_ms": 30002.038,
+        "p95_ms": 30002.492,
+        "quality_gap_pct": {
+          "max": 0.014,
+          "min": 0.0,
+          "p50": 0.014,
+          "p95": 0.014
+        }
+      },
+      "table": {
+        "count": 3,
+        "max_ms": 11.631,
+        "mean_ms": 10.921,
+        "min_ms": 10.208,
+        "p50_ms": 10.923,
+        "p95_ms": 11.631,
+        "response_bytes": {
+          "max": 59955.0,
+          "min": 59955.0,
+          "p50": 59955.0,
+          "p95": 59955.0
+        },
+        "url_bytes": {
+          "max": 1811.0,
+          "min": 1811.0,
+          "p50": 1811.0,
+          "p95": 1811.0
+        }
+      }
+    }
+  }
+}
